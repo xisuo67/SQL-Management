@@ -265,9 +265,10 @@ dist
 node_modules
 .idea
 *.log
-bin
 obj
 .vs 
+*.dll
+*.exe
 packages 
 *.csproj.user 
 DailyBuild
