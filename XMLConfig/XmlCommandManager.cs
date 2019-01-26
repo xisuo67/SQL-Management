@@ -15,11 +15,24 @@ namespace XMLConfing
     /// </summary>
     public static class XmlCommandManager
     {
+        private static readonly bool IsAspnetApp = string.IsNullOrEmpty(System.Web.HttpRuntime.AppDomainAppId) == false;
         private static readonly string CacheKey = Guid.NewGuid().ToString();
         private static System.Exception s_ExceptionOnLoad = null;
         private static Dictionary<string, XmlCommandItem> s_dict = null;
+        /// <summary>
+        /// 获取文件路径
+        /// </summary>
+        private static string RuntimeFolder
+        {
+            get
+            {
+                if (IsAspnetApp)
+                    return System.Web.HttpRuntime.AppDomainAppPath;
 
-
+                else
+                    return AppDomain.CurrentDomain.BaseDirectory;
+            }
+        }
         /// <summary>
         /// 当前运行环境是否为测试环境（非ASP.NET环境）
         /// </summary>
@@ -164,6 +177,23 @@ namespace XMLConfing
             return null;
         }
 
+        /// <summary>
+        /// 初始化XML文件
+        /// </summary>
+        /// <param name="Folder"></param>
+        public static void InitXML(string Folder)
+        {
+            if (false == string.IsNullOrEmpty(Folder))
+            {
+                string[] folders = Folder.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 
+                for (int i = 0; i < folders.Length; i++)
+                {
+                    folders[i] = System.IO.Path.Combine(RuntimeFolder, folders[i]);
+                }
+
+                XmlCommandManager.LoadCommnads(folders);
+            }
+        }
     }
 }
